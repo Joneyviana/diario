@@ -18,6 +18,7 @@ class CardRepository {
   CardRepository(AppDatabase database){
     cardDao = database.cardDao;
     templateDao = database.templateDao;
+    //cardDao.deleteAll();
   }
 
   Future<List<Future<TemplateCard>>> getTemplateCard(DateTime date) async{
@@ -38,9 +39,16 @@ class CardRepository {
      return new Card(null,formatData(DateTime.now()),template,"");
    }
 
-  Future<int> saveCard(Card card) async {
+   Future<void> deleteTemplate(int id) async{
+     return await templateDao.deleteTemplate(id);
+   }
+
+  Future<int> saveCard( Card card) async {
     if(card.id == null){
-       return cardDao.insertCard(card);
+       card = await getCard(DateTime.parse(card.date),card.template_id);
+       if(card.id == null){
+         return cardDao.insertCard(card);
+       }
     }
     else {
        return cardDao.updateCard(card);

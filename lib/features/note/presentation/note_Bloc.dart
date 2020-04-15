@@ -6,70 +6,56 @@ import 'package:annotations/features/note/domain/note_repository.dart';
 import 'package:annotations/presentation/tab_base_controller.dart';
 import 'package:mobx/mobx.dart';
 import 'package:kiwi/kiwi.dart' as kiwi;
+import 'package:rxdart/rxdart.dart';
 
-part 'note_controller.g.dart';
 
-class NoteController = NoteStore with _$NoteController;
-
-abstract class NoteStore with Store implements TabBaseController{
+class NoteBloc implements TabBaseController{
   NoteRepository noteRepository;
 
-  NoteStore(NoteRepository noteRepository) {
+  BehaviorSubject<Note> note;
+
+  NoteBloc(NoteRepository noteRepository) {
      this.noteRepository = noteRepository;
+     this.note = new BehaviorSubject<Note>.seeded(builderEmptyNote());
   }
 
-  Note currentNote ;
+  Note currentNote = builderEmptyNote() ;
 
-  @observable
+
   DateTime date = DateTime.now();
   
-  @observable
-  List<Note> notes ;
-
-  @observable 
-  Note note = builderEmptyNote();
-  
-  
   kiwi.Container container = kiwi.Container();
-  
-  @action 
+   
   Future<void> initNote() async {
     
     CardController cardController = await container.resolve<Future<CardController>>();
     date = cardController.date;
-    note = await noteRepository.getNoteOfDay(date);
+    currentNote = await noteRepository.getNoteOfDay(date);
+    note.sink.add(currentNote);
   }
 
-  @action 
   Future<void> previous() async {
     var _date = date.subtract(Duration(days: 1)); 
-     note = await noteRepository.getNoteOfDay(_date);
-     this.date = _date;
+    currentNote = await noteRepository.getNoteOfDay(_date);
+    note.sink.add(currentNote);
+    this.date = _date;
   }
 
-  @action
   Future<void> next() async {
     var _date = date.add(Duration(days: 1));
-    note = await noteRepository.getNoteOfDay(_date); 
+    currentNote = await noteRepository.getNoteOfDay(_date);
+    note.sink.add(currentNote);
     this.date = _date;
   }
 
-  @computed
-  String get texto  => note.text;
-
-  @action
   Future<void> getOfDay(DateTime _date) async {
-    note = await noteRepository.getNoteOfDay(_date); 
+    currentNote = await noteRepository.getNoteOfDay(_date);
+    note.sink.add(currentNote);
     this.date = _date;
   }
 
-  void updateNote(){
-    this.note = currentNote;
-  }
-
-  void saveNoteOrUpdate(String texto) {
-    print("save note");
-    currentNote = new Note(this.note.id,this.note.date,texto);
+  void saveNoteOrUpdate(String texto) async{
+    currentNote = new Note(currentNote.id,currentNote.date,texto);
     noteRepository.save(texto,date);
   }
 }

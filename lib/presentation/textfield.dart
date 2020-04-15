@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 
 class TextFieldApp extends StatelessWidget {      
-  String texto;
+  TextEditingController textoEditingController;
   Function function;
   String hintTexto;
-  TextFieldApp(this.texto,this.hintTexto,this.function);
+  TextFieldApp(String texto,String hintTexto,Function function){
+     this.textoEditingController = new TextEditingController(text:texto);
+     this.hintTexto = hintTexto;
+     this.function = function;
+  }
+
+  void onChange(String texto) async {
+    await this.function(texto);
+    textoEditingController.text = texto;
+    textoEditingController.selection = TextSelection.fromPosition(TextPosition(offset: textoEditingController.text.length));
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      style: renderStyleApp() ,
-      onChanged: this.function,                      
+      style: renderStyleApp(),
+      onChanged:(texto)=> onChange(texto),                      
       keyboardType: TextInputType.multiline,
       decoration: InputDecoration(
         border: InputBorder.none,
@@ -18,8 +28,7 @@ class TextFieldApp extends StatelessWidget {
         hintText: this.hintTexto,
       ),
       maxLines: null,
-      controller: new TextEditingController(
-        text: this.texto),
+      controller:textoEditingController
       );
                             
   }

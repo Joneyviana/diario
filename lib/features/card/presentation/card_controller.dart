@@ -42,13 +42,13 @@ abstract class CardStore with Store implements TabBaseController{
     
   }
   Future<void> getTemplate(DateTime date) async {
-    List<TemplateCard> templatesTemp = List<TemplateCard>();
+    currentTemplateCards = List<TemplateCard>();
     var _templatesAsync = await cardRepository.getTemplateCard(date);
     for(var i=0; i<_templatesAsync.length; i++){
       var template = await _templatesAsync[i];
-      templatesTemp.add(template);
+      currentTemplateCards.add(template);
     }
-    this.templateCards = templatesTemp;
+    this.templateCards = currentTemplateCards;
   }
 
   @action 
@@ -76,14 +76,21 @@ abstract class CardStore with Store implements TabBaseController{
   Future<void> saveNoteOrUpdateCard(int position, String texto) {
     Card card = templateCards[position].card;
     templateCards[position].card = new Card(card.id,card.date,templateCards[position].id,texto);
-    cardRepository.saveCard(templateCards[position].card);
+    cardRepository.saveCard(new Card(card.id,card.date,templateCards[position].id,texto));
   }
   
   @action
   Future<void> insertTemplate( String texto) async {
      int id = await cardRepository.saveTemplate(new Template(null,texto));
-     templateCards.add(new TemplateCard(id, texto, await cardRepository.getCard(this.date,id))); 
+     currentTemplateCards.add(new TemplateCard(id, texto, await cardRepository.getCard(this.date,id))); 
+     templateCards = currentTemplateCards;
 
+  }
+  @action
+  Future<void> deleteTemplate(int position) async {
+     await cardRepository.deleteTemplate(templateCards[position].id);
+     currentTemplateCards.removeAt(position);
+     templateCards = currentTemplateCards;
   }
 
   @action
@@ -93,14 +100,5 @@ abstract class CardStore with Store implements TabBaseController{
   
 
   }
-
-  @computed
-  int get size  => templateCards.length;
-
-  @computed
-  List<String> get titulos  => templateCards.map((template) => template.titulo).toList();
-
-  @computed
-  List<String> get textos  => templateCards.map((template) => template.card.text).toList();
 
 }

@@ -223,6 +223,17 @@ class _$CardDao extends CardDao {
   }
 
   @override
+  Future<Card> findById(int id) async {
+    return _queryAdapter.query('SELECT * FROM Card WHERE id = ?',
+        arguments: <dynamic>[id], mapper: _cardMapper);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Card');
+  }
+
+  @override
   Future<int> insertCard(Card card) {
     return _cardInsertionAdapter.insertAndReturnId(
         card, sqflite.ConflictAlgorithm.abort);
@@ -267,6 +278,12 @@ class _$TemplateDao extends TemplateDao {
   Future<List<Template>> findAll() async {
     return _queryAdapter.queryList('SELECT * FROM Template',
         mapper: _templateMapper);
+  }
+
+  @override
+  Future<void> deleteTemplate(int id) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Template WHERE id = ?',
+        arguments: <dynamic>[id]);
   }
 
   @override

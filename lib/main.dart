@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'features/card/presentation/card_controller.dart';
 import 'features/card/presentation/card_page.dart';
 import 'features/login/presentation/login_page.dart';
+import 'features/note/presentation/note_Bloc.dart';
 import 'features/note/presentation/note_controller.dart';
 import 'features/note/presentation/note_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppContainer.initialise();
   kiwi.Container container = kiwi.Container();
-  NoteController noteController = await container.resolve<Future<NoteController>>();
+  NoteBloc noteController = await container.resolve<Future<NoteBloc>>();
   CardController cardController = await container.resolve<Future<CardController>>();
   runApp(MaterialApp(
     // Start the app with the "/" named route. In this case, the app starts
@@ -37,9 +38,9 @@ void main() async {
     initialRoute: '/',
     routes: {
       // When navigating to the "/" route, build the FirstScreen widget.
-      '/': (context) => NotePage(noteController:noteController),
+      '/': (context) => NotePage(noteBloc:noteController),
       // When navigating to the "/second" route, build the SecondScreen widget.
-      '/note': (context) => NotePage(noteController:noteController),
+      '/note': (context) => NotePage(noteBloc:noteController),
       '/card': (context) => CardPage(cardController:cardController),
     },
   ));

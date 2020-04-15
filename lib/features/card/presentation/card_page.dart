@@ -1,5 +1,7 @@
 import 'package:annotations/infra/date/format_date.dart';
+import 'package:annotations/infra/debounce.dart';
 import 'package:annotations/presentation/app_tab_base.dart';
+import 'package:annotations/presentation/cancelar_button.dart';
 import 'package:annotations/presentation/tab.dart';
 import 'package:annotations/presentation/textfield.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +13,15 @@ class CardPage extends StatefulWidget  {
   CardController cardController;
   CardPage({Key key,this.cardController}) : super(key: key);
 
+  
+
   @override
   _CardNoteState createState() => _CardNoteState();
 }
 
 class _CardNoteState extends State<CardPage> with WidgetsBindingObserver {
+  final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   void initState() {
     widget.cardController.initTemplate();
@@ -25,6 +31,7 @@ class _CardNoteState extends State<CardPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -41,22 +48,25 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
     return Container( 
       height: 200,
       child:Card(
+        color: Colors.orangeAccent[100],
         elevation: 8.0,
         margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         child: Container(
-          decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .0)),
           child: Column(
             children:[
-              TextField(style: renderStyleApp(),
-                onChanged: (text)=> widget.cardController.updateTemplate(index, text),
+              Row(
+                children:[
+              Expanded(child:TextField(style: renderStyleApp(),
+                onChanged: (text)=>{ _debouncer.run(() => widget.cardController.updateTemplate(index, text))},
                 controller: new TextEditingController(
-                text: widget.cardController.titulos[index]),
+                text: widget.cardController.templateCards[index].titulo),
                 decoration: InputDecoration(
                 hintText: "Digite um titulo",
                 ),
-              ),
-              TextFieldApp(widget.cardController.textos[index],
-            "inicie sua anotação",(text) => widget.cardController.saveNoteOrUpdateCard(index, text))
+              )),cancelar(Colors.green,Colors.orangeAccent[100],
+                 ()=> widget.cardController.deleteTemplate(index))],),
+              TextFieldApp(widget.cardController.templateCards[index].card.text,
+            "inicie sua anotação",(text) =>{ _debouncer.run(() => widget.cardController.saveNoteOrUpdateCard(index, text))})
             ]),
         ),
       )
@@ -65,6 +75,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding:false,
       body: Observer(builder:(_) => renderAppTabLayouTbuild(context,[
         Container(
           margin: const EdgeInsets.only(bottom: 25.0),
@@ -74,7 +85,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
         itemBuilder: (context, index) => _makeCard(context, index),
         itemCount: widget.cardController.templateCards.length,
         scrollDirection: Axis.vertical,
-        shrinkWrap: true
+        shrinkWrap:true,
         )],TabApp(controller:widget.cardController,iconMode: Icons.view_list,))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

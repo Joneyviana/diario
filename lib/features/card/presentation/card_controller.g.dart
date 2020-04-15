@@ -9,21 +9,6 @@ part of 'card_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$CardController on CardStore, Store {
-  Computed<int> _$sizeComputed;
-
-  @override
-  int get size => (_$sizeComputed ??= Computed<int>(() => super.size)).value;
-  Computed<List<String>> _$titulosComputed;
-
-  @override
-  List<String> get titulos =>
-      (_$titulosComputed ??= Computed<List<String>>(() => super.titulos)).value;
-  Computed<List<String>> _$textosComputed;
-
-  @override
-  List<String> get textos =>
-      (_$textosComputed ??= Computed<List<String>>(() => super.textos)).value;
-
   final _$dateAtom = Atom(name: 'CardStore.date');
 
   @override
@@ -110,6 +95,14 @@ mixin _$CardController on CardStore, Store {
     return _$insertTemplateAsyncAction.run(() => super.insertTemplate(texto));
   }
 
+  final _$deleteTemplateAsyncAction = AsyncAction('deleteTemplate');
+
+  @override
+  Future<void> deleteTemplate(int position) {
+    return _$deleteTemplateAsyncAction
+        .run(() => super.deleteTemplate(position));
+  }
+
   final _$updateTemplateAsyncAction = AsyncAction('updateTemplate');
 
   @override
@@ -133,7 +126,7 @@ mixin _$CardController on CardStore, Store {
   @override
   String toString() {
     final string =
-        'date: ${date.toString()},templateCards: ${templateCards.toString()},note: ${note.toString()},size: ${size.toString()},titulos: ${titulos.toString()},textos: ${textos.toString()}';
+        'date: ${date.toString()},templateCards: ${templateCards.toString()},note: ${note.toString()}';
     return '{$string}';
   }
 }

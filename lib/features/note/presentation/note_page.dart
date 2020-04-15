@@ -1,17 +1,15 @@
+import 'package:annotations/features/note/domain/note_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:annotations/infra/date/format_date.dart';
 import 'package:annotations/infra/debounce.dart';
 import 'package:annotations/presentation/app_tab_base.dart';
 import 'package:annotations/presentation/tab.dart';
 import 'package:annotations/presentation/textfield.dart';
-
-import 'package:flutter_mobx/flutter_mobx.dart';
-
-import 'note_controller.dart';
+import 'note_Bloc.dart';
 
 class NotePage extends StatefulWidget {
-  NoteController noteController;
-  NotePage({Key key,this.noteController}) : super(key: key){
+  NoteBloc noteBloc;
+  NotePage({Key key,this.noteBloc}) : super(key: key){
 
   }
 
@@ -19,7 +17,7 @@ class NotePage extends StatefulWidget {
   NotePageState createState() => NotePageState();
 }
 
-class NotePageState extends State<NotePage> with WidgetsBindingObserver {
+class NotePageState extends State<NotePage> {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
@@ -27,36 +25,28 @@ class NotePageState extends State<NotePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    widget.noteController.initNote();
-    WidgetsBinding.instance.addObserver(this);
+    widget.noteBloc.initNote();
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-void didChangeAppLifecycleState(AppLifecycleState state) {
-  if(state == AppLifecycleState.paused){
-    print("pausou essa bosta");
-    widget.noteController.updateNote();
-  }
-}
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Observer(builder:(_) => renderAppTabLayouTbuild(context,[
+      resizeToAvoidBottomPadding:false,
+      body:new StreamBuilder(stream: widget.noteBloc.note, builder: (context, AsyncSnapshot<Note> snapshot)
+              => renderAppTabLayouTbuild(context,[
         Container(
           margin: const EdgeInsets.only(bottom: 25.0),
-          child: Text(formatData(widget.noteController.date),
+          child: Text(formatData(widget.noteBloc.date),
             style: renderStyleApp())),
-          TextFieldApp(widget.noteController.texto,"Inicie sua anotação",
-           (text) {_debouncer.run(() => widget.noteController.saveNoteOrUpdate(text));})
-                  ],TabApp(controller:widget.noteController,iconMode:Icons.view_column))));
+          TextFieldApp(widget.noteBloc.currentNote.text,"Inicie sua anotação",
+           (text) {_debouncer.run(() => widget.noteBloc.saveNoteOrUpdate(text));})
+                  ],TabApp(controller:widget.noteBloc,iconMode:Icons.view_column))));
   }
 }
 

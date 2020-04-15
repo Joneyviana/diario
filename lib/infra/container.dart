@@ -1,6 +1,7 @@
 import 'package:annotations/features/card/domain/card_repository.dart';
 import 'package:annotations/features/card/presentation/card_controller.dart';
 import 'package:annotations/features/note/domain/note_repository.dart';
+import 'package:annotations/features/note/presentation/note_Bloc.dart';
 import 'package:annotations/features/note/presentation/note_controller.dart';
 import 'package:kiwi/kiwi.dart' as kiwi;
 
@@ -36,6 +37,9 @@ class AppContainer {
 
     container.registerFactory((c) async => new NoteController(
       await c.resolve<Future<NoteRepository>>()));  
+
+    container.registerFactory((c) async => new NoteBloc(
+      await c.resolve<Future<NoteRepository>>()));    
 
      container.registerFactory((c) async => new CardController(
       await c.resolve<Future<CardRepository>>('testCard')), name:'testCardController');    

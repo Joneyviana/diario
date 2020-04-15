@@ -54,6 +54,7 @@ mixin _$NoteController on NoteStore, Store {
   @override
   Note get note {
     _$noteAtom.context.enforceReadPolicy(_$noteAtom);
+    _$noteAtom.reportObserved();
     return super.note;
   }
 

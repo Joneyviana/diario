@@ -25,7 +25,7 @@ class NoteRepository {
   Future<void> save(String texto,DateTime date) async {
     if(this.note == null){
       note = await getNoteOfDay(date);
-      if(note.text.isEmpty){
+      if(note.id == null){
         int id = await noteDao.insertNote(Note(null,formatData(date),texto));
         this.note = Note(id,formatData(date),texto);
       }

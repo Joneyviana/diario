@@ -15,4 +15,7 @@ import 'card_entity.dart';
 
    @update
    Future<int> updateTemplate(Template template);
+
+   @Query('DELETE FROM Template WHERE id = :id')
+   Future<void> deleteTemplate(int id);
  }

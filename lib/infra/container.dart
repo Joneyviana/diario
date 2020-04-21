@@ -32,8 +32,11 @@ class AppContainer {
     container.registerSingleton((c) async => new CardRepository(
       await c.resolve<Future<AppDatabase>>())); 
 
+    container.registerFactory((c) async => new NoteBloc(
+      await c.resolve<Future<NoteRepository>>('testNote')),name:'testNoteBloc');   
+
     container.registerFactory((c) async => new NoteController(
-      await c.resolve<Future<NoteRepository>>('testNote')),name:'testNoteController');   
+      await c.resolve<Future<NoteRepository>>('testNote')),name:'testNoteController');     
 
     container.registerFactory((c) async => new NoteController(
       await c.resolve<Future<NoteRepository>>()));  

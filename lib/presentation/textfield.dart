@@ -12,8 +12,9 @@ class TextFieldApp extends StatelessWidget {
 
   void onChange(String texto) async {
     await this.function(texto);
+    int offset = textoEditingController.selection.base.offset;
     textoEditingController.text = texto;
-    textoEditingController.selection = TextSelection.fromPosition(TextPosition(offset: textoEditingController.text.length));
+    textoEditingController.selection = TextSelection.fromPosition(TextPosition(offset:offset));
   }
 
   @override

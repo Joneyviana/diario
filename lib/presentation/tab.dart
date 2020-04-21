@@ -60,12 +60,14 @@ class TabState extends State<TabApp>{
     return Container(
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(color: Colors.orangeAccent[100]),
+            height: 80,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                makeIcone("Anterior",Icons.chevron_left,() => widget.controller.previous()),
-                makeIcone("Proximo",Icons.chevron_right,() => widget.controller.next()),
+                makeIcone("Previous",Icons.chevron_left,() => widget.controller.previous()),
+                makeIcone("next",Icons.chevron_right,() => widget.controller.next()),
                 makeIcone("Calendar",Icons.calendar_view_day,() => renderCalendar(context)),
-                makeIcone("modo",widget.iconMode, () => changeMode()),
+                makeIcone("Mode",widget.iconMode, () => changeMode()),
               ],
             )
             //your elements here

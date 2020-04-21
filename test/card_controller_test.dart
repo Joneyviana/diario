@@ -62,7 +62,7 @@ void main() async {
     test('list template', () async {
        await cardController.getTemplate(DateTime.now());
        await cardController.insertTemplate("teste");
-       cardController.saveNoteOrUpdateCard(0,"Meu cartão");
+       await cardController.saveNoteOrUpdateCard(0,"Meu cartão");
        await cardController.getTemplate(DateTime.now());
        expect(cardController.templateCards[0].card.text,equals("Meu cartão"));
     });
@@ -78,7 +78,7 @@ void main() async {
        expect(cardController.templateCards[0].card.text,equals('create test'));
     });
 
-    test('previus template', () async {
+    test('next template', () async {
        Template template = Template(null,"titulo");
        int id = await templateDao.insertTemplate(template);
        final card = Card(null,formatData(DateTime.now().add(Duration(days: 1))),id, 'create test 1');
@@ -92,7 +92,7 @@ void main() async {
     test('insert card', () async {
        await cardController.getTemplate(DateTime.now());
        await cardController.insertTemplate("teste");
-       cardController.saveNoteOrUpdateCard(0,"Meu cartão");
+       await cardController.saveNoteOrUpdateCard(0,"Meu cartão");
        List<Card> cardsFound = await cardDao.findAll();
       expect(cardsFound.length, equals(1));
 
@@ -104,9 +104,9 @@ void main() async {
     });
     test('update card', () async {
       await cardController.getTemplate(DateTime.now());
-       await cardController.insertTemplate("teste");
-       cardController.saveNoteOrUpdateCard(0,"Meu cartão");
-       cardController.saveNoteOrUpdateCard(0,"Update cartão");
+      await cardController.insertTemplate("teste");
+       await cardController.saveNoteOrUpdateCard(0,"Meu cartão");
+       await cardController.saveNoteOrUpdateCard(0,"Update cartão");
        List<Card> cardsFound = await cardDao.findAll();
       expect(cardsFound.length, equals(1));
 

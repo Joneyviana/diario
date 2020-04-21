@@ -52,6 +52,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
         elevation: 8.0,
         margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         child: Container(
+          padding: const EdgeInsets.only(bottom:10.0),
           child: Column(
             children:[
               Row(
@@ -65,8 +66,9 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                 ),
               )),cancelar(Colors.green,Colors.orangeAccent[100],
                  ()=> widget.cardController.deleteTemplate(index))],),
+              Expanded(child:SingleChildScrollView(child:
               TextFieldApp(widget.cardController.templateCards[index].card.text,
-            "inicie sua anotação",(text) =>{ _debouncer.run(() => widget.cardController.saveNoteOrUpdateCard(index, text))})
+            "inicie sua anotação",(text) =>{ _debouncer.run(() => widget.cardController.saveNoteOrUpdateCard(index, text))})))
             ]),
         ),
       )
@@ -75,7 +77,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding:false,
+      resizeToAvoidBottomInset:true,
       body: Observer(builder:(_) => renderAppTabLayouTbuild(context,[
         Container(
           margin: const EdgeInsets.only(bottom: 25.0),
@@ -85,14 +87,20 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
         itemBuilder: (context, index) => _makeCard(context, index),
         itemCount: widget.cardController.templateCards.length,
         scrollDirection: Axis.vertical,
+        physics: new NeverScrollableScrollPhysics(),
         shrinkWrap:true,
-        )],TabApp(controller:widget.cardController,iconMode: Icons.view_list,))),
+        )])),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           widget.cardController.insertTemplate(""); },
         child: Icon(Icons.add),
         backgroundColor: Colors.green, 
-      )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child:TabApp(controller:widget.cardController,iconMode: Icons.view_list),
+        shape: const CircularNotchedRectangle()),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked
     );
    
 

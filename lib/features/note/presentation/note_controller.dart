@@ -67,9 +67,9 @@ abstract class NoteStore with Store implements TabBaseController{
     this.note = currentNote;
   }
 
-  void saveNoteOrUpdate(String texto) {
+  Future<void> saveNoteOrUpdate(String texto) async {
     print("save note");
     currentNote = new Note(this.note.id,this.note.date,texto);
-    noteRepository.save(texto,date);
+    await noteRepository.save(texto,date);
   }
 }

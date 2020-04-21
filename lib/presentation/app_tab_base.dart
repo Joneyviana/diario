@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-  renderAppTabLayouTbuild(BuildContext context,List<Widget> content, Widget tabBar) {
+  renderAppTabLayouTbuild(BuildContext context,List<Widget> content) {
     print("renderizou");
     return SafeArea(
       child: Column(
@@ -13,8 +13,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
                   child: Column(children:content)
             )
           )
-        ),
-        tabBar //tabBar
+        ), //tabBar
       ])
     );
 

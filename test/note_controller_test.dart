@@ -65,7 +65,7 @@ void main() async {
        await noteController.saveNoteOrUpdate("teste");
        await noteController.saveNoteOrUpdate("teste update");
        await noteController.getOfDay(DateTime.now());
-       expect(noteController.note.text,equals("teste update"));
+       expect(noteController.currentNote.text,equals("teste update"));
     });
 
     test('previus Note', () async {

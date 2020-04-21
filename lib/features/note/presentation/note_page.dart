@@ -17,7 +17,7 @@ class NotePage extends StatefulWidget {
   NotePageState createState() => NotePageState();
 }
 
-class NotePageState extends State<NotePage> {
+class NotePageState extends State<NotePage> with WidgetsBindingObserver {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
@@ -31,13 +31,14 @@ class NotePageState extends State<NotePage> {
 
   @override
   void dispose() {
+    _debouncer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding:false,
+      resizeToAvoidBottomInset:true,
       body:new StreamBuilder(stream: widget.noteBloc.note, builder: (context, AsyncSnapshot<Note> snapshot)
               => renderAppTabLayouTbuild(context,[
         Container(
@@ -46,7 +47,9 @@ class NotePageState extends State<NotePage> {
             style: renderStyleApp())),
           TextFieldApp(widget.noteBloc.currentNote.text,"Inicie sua anotação",
            (text) {_debouncer.run(() => widget.noteBloc.saveNoteOrUpdate(text));})
-                  ],TabApp(controller:widget.noteBloc,iconMode:Icons.view_column))));
+                  ])),
+                  bottomNavigationBar:TabApp(controller:widget.noteBloc,iconMode: Icons.view_column) ,
+                  );
   }
 }
 

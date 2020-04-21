@@ -9,10 +9,14 @@ class Debouncer {
   Debouncer({ this.milliseconds });
 
   run(VoidCallback action) {
+    dispose();
+
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  
+  }
+  void dispose(){
     if (_timer != null) {
       _timer.cancel();
     }
-
-    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

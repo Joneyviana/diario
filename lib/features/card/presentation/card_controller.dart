@@ -36,6 +36,7 @@ abstract class CardStore with Store implements TabBaseController{
   
   @action 
   Future<void> initTemplate() async {
+    List<Card> cards = await cardRepository.listAll();
     NoteController noteController = await container.resolve<Future<NoteController>>();
     date = noteController.date;
     this.getTemplate(date);
@@ -73,10 +74,11 @@ abstract class CardStore with Store implements TabBaseController{
   }
 
   @action
-  Future<void> saveNoteOrUpdateCard(int position, String texto) {
+  Future<void> saveNoteOrUpdateCard(int position, String texto) async {
     Card card = templateCards[position].card;
-    templateCards[position].card = new Card(card.id,card.date,templateCards[position].id,texto);
-    cardRepository.saveCard(new Card(card.id,card.date,templateCards[position].id,texto));
+    card  = new Card(card.id,card.date,card.template_id,texto);
+    int id = await cardRepository.saveCard(card);
+    templateCards[position].card = new Card(id,card.date,card.template_id,texto);
   }
   
   @action
